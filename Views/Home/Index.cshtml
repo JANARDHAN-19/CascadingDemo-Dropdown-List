@@ -1,0 +1,55 @@
+﻿@model List<Country>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<select id="Countries" name="CountryId">
+    <option value="">Select Country</option>
+    @foreach (var country in Model)
+    {
+        <option value="@country.CountryId">@country.CountryName</option>
+    }
+</select>
+
+<select id="States" name="StateId">
+    <option value="">Select State</option>
+</select>
+
+<select id="Cities" name="CityId">
+    <option value="">Select City</option>
+</select>
+
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#Countries').change(function () {
+            var countryId = $(this).val();
+            $.getJSON('@Url.Action("GetStates")', { countryId: countryId }, function (states) {
+                var statesSelect = $('#States');
+                statesSelect.empty();
+                $.each(states, function (index, state) {
+                    statesSelect.append($('<option/>', {
+                        value: state.value,
+                        text: state.text
+                    }));
+                });
+            });
+        });
+
+        $('#States').change(function () {
+            var stateId = $(this).val();
+            $.getJSON('@Url.Action("GetCities")', { stateId: stateId }, function (cities) {
+                var citiesSelect = $('#Cities');
+                citiesSelect.empty();
+                $.each(cities, function (index, city) {
+                    citiesSelect.append($('<option/>', {
+                        value: city.value,
+                        text: city.text
+                    }));
+                });
+            });
+        });
+    });
+</script>
